@@ -1,7 +1,13 @@
-import express from 'express';
-import cors from 'cors';
+import * as express from 'express';
+import * as cors from 'cors';
+
+import 'dotenv/config';
+
+import 'reflect-metadata';
 
 import routes from './routes';
+
+import './database';
 
 class App {
   public server: express.Application;
