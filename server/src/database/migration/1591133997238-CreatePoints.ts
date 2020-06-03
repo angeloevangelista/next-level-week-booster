@@ -19,7 +19,7 @@ export class CreatePoints1591133997238 implements MigrationInterface {
         {
           name: 'image',
           type: 'varchar',
-          isNullable: false,
+          isNullable: true,
         },
         {
           name: 'email',

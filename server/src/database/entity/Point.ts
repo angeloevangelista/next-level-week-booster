@@ -7,7 +7,7 @@ export class Point extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column()
+  @Column({ nullable: true })
   image!: string;
 
   @Column()
@@ -19,15 +19,15 @@ export class Point extends BaseEntity {
   @Column()
   whatsapp!: string;
 
-  @Column()
-  latitude!: string;
+  @Column({ type: 'decimal' })
+  latitude!: number;
 
-  @Column()
-  longitude!: string;
+  @Column({ type: 'decimal' })
+  longitude!: number;
 
   @Column()
   city!: string;
 
-  @Column()
+  @Column({ length: 2 })
   uf!: string;
 }
