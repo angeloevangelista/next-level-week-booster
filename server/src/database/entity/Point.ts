@@ -5,29 +5,29 @@ import {
 @Entity({ name: 'points' })
 export class Point extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column()
-  image: string;
+  image!: string;
 
   @Column()
-  name: string;
+  name!: string;
 
   @Column()
-  email: string;
+  email!: string;
 
   @Column()
-  whatsapp: string;
+  whatsapp!: string;
 
   @Column()
-  latitude: string;
+  latitude!: string;
 
   @Column()
-  longitude: string;
+  longitude!: string;
 
   @Column()
-  city: string;
+  city!: string;
 
   @Column()
-  uf: string;
+  uf!: string;
 }

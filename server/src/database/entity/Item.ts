@@ -5,11 +5,11 @@ import {
 @Entity({ name: 'items' })
 export class Item extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column()
-  title: string;
+  title!: string;
 
   @Column()
-  image: string;
+  image!: string;
 }
