@@ -1,6 +1,8 @@
 import { resolve } from 'path';
 import { ConnectionOptions } from 'typeorm';
 
+import { SnakeNamingStrategy } from './snake_naming';
+
 const options: ConnectionOptions = {
   type: process.env.DB_TYPE as 'postgres',
   host: process.env.DB_HOST,
@@ -8,6 +10,7 @@ const options: ConnectionOptions = {
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
+  namingStrategy: new SnakeNamingStrategy(),
   synchronize: true,
   logging: false,
   entities: [
