@@ -1,20 +1,20 @@
 import { Router } from 'express';
 
-import ItemController from './controllers/ItemController';
-import PointController from './controllers/PointController';
+import ItemsController from './controllers/ItemsController';
+import PointsController from './controllers/PointsController';
 
 const routes = Router();
 
 /**
  * Items
  */
-routes.get('/items', ItemController.index);
+routes.get('/items', ItemsController.index);
 
 /**
  * Points
  */
-routes.get('/points', PointController.index);
+routes.get('/points', PointsController.index);
 
-routes.post('/points', PointController.create);
+routes.post('/points', PointsController.create);
 
 export default routes;

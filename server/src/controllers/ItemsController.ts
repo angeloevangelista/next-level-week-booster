@@ -1,11 +1,9 @@
 import { Request, Response } from 'express';
 import { Item } from '../database/entity/Item';
 
-import database from '../database';
-
 class ItemController {
   async index(req: Request, res: Response) {
-    const items = await database.then((connection) => connection.manager.find(Item));
+    const items = await Item.find();
 
     const serializedItems = items.map((item) => ({
       id: item.id,
