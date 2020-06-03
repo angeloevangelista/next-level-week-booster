@@ -1,3 +1,4 @@
+import { resolve } from 'path';
 import express from 'express';
 import cors from 'cors';
 
@@ -22,6 +23,10 @@ class App {
   private middlewares() {
     this.server.use(express.json());
     this.server.use(cors());
+    this.server.use(
+      '/uploads',
+      express.static(resolve(__dirname, '..', 'uploads')),
+    );
   }
 
   private routes() {
