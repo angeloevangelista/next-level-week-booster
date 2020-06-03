@@ -2,7 +2,7 @@ import {
   Entity, PrimaryGeneratedColumn, Column, BaseEntity,
 } from 'typeorm';
 
-@Entity()
+@Entity({ name: 'items' })
 export class Item extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
