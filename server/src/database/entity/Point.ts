@@ -1,6 +1,8 @@
 import {
-  Entity, PrimaryGeneratedColumn, Column, BaseEntity,
+  Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToMany, JoinTable, Tree,
 } from 'typeorm';
+
+import { Item } from './Item';
 
 @Entity({ name: 'points' })
 export class Point extends BaseEntity {
@@ -30,4 +32,7 @@ export class Point extends BaseEntity {
 
   @Column({ length: 2 })
   uf!: string;
+
+  @ManyToMany((type) => Item, (item) => item.points)
+  items!: Item[];
 }

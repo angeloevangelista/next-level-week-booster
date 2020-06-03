@@ -1,6 +1,8 @@
 import {
-  Entity, PrimaryGeneratedColumn, Column, BaseEntity,
+  Entity, PrimaryGeneratedColumn, Column, BaseEntity, JoinTable, ManyToMany,
 } from 'typeorm';
+
+import { Point } from './Point';
 
 @Entity({ name: 'items' })
 export class Item extends BaseEntity {
@@ -12,4 +14,10 @@ export class Item extends BaseEntity {
 
   @Column()
   image!: string;
+
+  @ManyToMany((type) => Point, (point:Point) => point.items, {
+    cascade: true,
+  })
+  @JoinTable()
+  points!: Point[];
 }
