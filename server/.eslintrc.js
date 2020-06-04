@@ -22,7 +22,7 @@ module.exports = {
     'import/no-unresolved': 'off',
     'import/extensions': 'off',
     'import/prefer-default-export': 'off',
-    'no-unused-vars': 'off',
+    'no-unused-vars': 0,
     'class-methods-use-this': 'off',
     'camelcase': 'off'
   },
