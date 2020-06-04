@@ -15,6 +15,8 @@ routes.get('/items', ItemsController.index);
  */
 routes.get('/points', PointsController.index);
 
+routes.get('/points/:pointId', PointsController.show);
+
 routes.post('/points', PointsController.create);
 
 export default routes;

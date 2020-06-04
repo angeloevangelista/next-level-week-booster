@@ -10,6 +10,23 @@ class PointController {
     return res.json(points);
   }
 
+  async show(req: Request, res: Response) {
+    const { pointId } = req.params;
+
+    const point = await Point.findOne({
+      where: {
+        id: pointId,
+      },
+      relations: ['items'],
+    });
+
+    if (!point) {
+      return res.status(400).json({ error: 'Point not found' });
+    }
+
+    return res.json(point);
+  }
+
   async create(req: Request, res: Response) {
     const {
       name,
