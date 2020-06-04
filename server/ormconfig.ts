@@ -8,7 +8,4 @@ module.exports = {
   migrations: [
     'src/database/migration/*.ts',
   ],
-  cli: {
-    migrationsDir: 'src/database/migration',
-  },
 };

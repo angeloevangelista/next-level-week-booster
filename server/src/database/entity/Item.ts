@@ -18,6 +18,8 @@ export class Item extends BaseEntity {
   @ManyToMany((type) => Point, (point:Point) => point.items, {
     cascade: true,
   })
-  @JoinTable()
+  @JoinTable({
+    name: 'point_items',
+  })
   points!: Point[];
 }
