@@ -1,0 +1,85 @@
+{
+	"info": {
+		"_postman_id": "66a5fab6-bf0c-4d4e-a57a-0d5f5eddb739",
+		"name": "Points",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"Mercado zé\",\n  \"email\": \"contato@imperatriz.com.br\",\n  \"whatsapp\": \"9999999999\",\n  \"latitude\": -40.7143528,\n  \"longitude\": 40.7143528,\n  \"city\": \"Rio do Sul\",\n  \"uf\": \"SC\",\n  \"items\": [\n  \t6\n  ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/points",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"points"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/points?city=Rio do Sul&uf=SC&items=1,2",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"points"
+					],
+					"query": [
+						{
+							"key": "city",
+							"value": "Rio do Sul"
+						},
+						{
+							"key": "uf",
+							"value": "SC"
+						},
+						{
+							"key": "items",
+							"value": "1,2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Find",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/points/5",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"points",
+						"5"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
