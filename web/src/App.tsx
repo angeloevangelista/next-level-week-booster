@@ -6,7 +6,7 @@ import Header from './components/Header';
 function App() {
   return (
     <>
-      <Header />
+      <Header title='Ecoleta'/>
 
       <h1>Conteudo</h1>
     </>
