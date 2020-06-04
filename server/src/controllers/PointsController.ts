@@ -1,11 +1,24 @@
 import { Request, Response } from 'express';
 
+import { In } from 'typeorm';
 import { Point } from '../database/entity/Point';
 import { Item } from '../database/entity/Item';
 
 class PointController {
   async index(req: Request, res: Response) {
-    const points = await Point.find();
+    const { city, uf, items } = req.query;
+
+    const parsedItems = String(items)
+      .split(',')
+      .map((item: string) => Number(item.trim()));
+
+    const points = await Point.find({
+      where: {
+        id: In(parsedItems),
+        city: String(city),
+        uf: String(uf),
+      },
+    });
 
     return res.json(points);
   }
@@ -42,6 +55,9 @@ class PointController {
     const items = await Item.findByIds(itemIds);
 
     const point = new Point();
+
+    point.image = 'https://images.unsplash.com/photo-1543083477-4f785aeafaa9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60';
+    // foto fixa para que não dê erro lá aonde o Diegao falou
 
     point.name = name;
     point.email = email;
