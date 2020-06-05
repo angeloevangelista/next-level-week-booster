@@ -2,6 +2,7 @@ import React, { useEffect, useState, ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { FiArrowLeft } from 'react-icons/fi';
 import { Map, TileLayer, Marker } from 'react-leaflet';
+import { LeafletMouseEvent } from 'leaflet';
 
 import apiEcoleta from '../../services/apiEcoleta';
 import apiIBGE from '../../services/apiIBGE';
@@ -47,6 +48,8 @@ const CreatePoint = () => {
 
   const [selectedCity, setSelectedCity] = useState(0);
 
+  const [selectedPosition, setSelectedPosition] = useState<[number, number]>([0, 0]);
+
   useEffect(() => {
     apiEcoleta.get('items').then(({ data: items }) => {
       setItems(items);
@@ -91,6 +94,12 @@ const CreatePoint = () => {
     const { value: city } = e.target;
 
     setSelectedCity(Number(city));
+  }
+
+  const handleMapClick = (e: LeafletMouseEvent) => {
+    const { latlng } = e;
+
+    setSelectedPosition([latlng.lat, latlng.lng]);
   }
 
   return (
@@ -147,13 +156,13 @@ const CreatePoint = () => {
             <span>Selecionne o endereço no mapa</span>
           </legend>
 
-          <Map center={[-24.0083135, -46.5066368]} zoom={15}>
+          <Map center={[-24.0083135, -46.5066368]} zoom={15} onClick={handleMapClick}>
             <TileLayer
               attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
 
-            <Marker position={[-24.0083135, -46.5066368]} />
+            <Marker position={selectedPosition} />
           </Map>
 
           <div className="field-group">
