@@ -4,25 +4,49 @@ import { FiArrowLeft } from 'react-icons/fi';
 import { Map, TileLayer, Marker } from 'react-leaflet';
 
 import apiEcoleta from '../../services/apiEcoleta';
+import apiIBGE from '../../services/apiIBGE';
 
 import './styles.css';
 
 import logo from '../../assets/logo.svg';
 
 interface Item {
-  id: string,
+  id: number,
   title: string,
   image_url: string,
+}
+
+interface IBGEUFResponse {
+  id: number,
+  sigla: string,
+}
+
+interface UF {
+  id: number,
+  initial: string,
 }
 
 const CreatePoint = () => {
   const [items, setItems] = useState<Item[]>([]);
 
+  const [ufs, setUfs] = useState<UF[]>([]);
+
   useEffect(() => {
     apiEcoleta.get('items').then(({ data: items }) => {
       setItems(items);
     });
-  }, [items]);
+  }, []);
+
+  useEffect(() => {
+    apiIBGE.get<IBGEUFResponse[]>('estados?orderBy=nome').then(({ data: ufs }) => {
+      const initials = ufs.map(uf => ({
+        id: uf.id,
+        initial: uf.sigla,
+      }));
+
+      setUfs(initials);
+    });
+  }, []);
 
   return (
     <div id="page-create-point">
@@ -92,6 +116,10 @@ const CreatePoint = () => {
               <label htmlFor="uf">Estado (UF)</label>
               <select name="uf" id="uf">
                 <option value="0">Selecione uma UF</option>
+
+                {ufs.map(uf => (
+                  <option key={uf.id} value={uf.id}>{uf.initial}</option>
+                ))}
               </select>
             </div>
             <div className="field">
