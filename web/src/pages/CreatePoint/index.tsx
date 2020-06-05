@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { FiArrowLeft } from 'react-icons/fi';
 import { Map, TileLayer, Marker } from 'react-leaflet';
 
-import api from '../../services/api';
+import apiEcoleta from '../../services/apiEcoleta';
 
 import './styles.css';
 
@@ -19,7 +19,7 @@ const CreatePoint = () => {
   const [items, setItems] = useState<Item[]>([]);
 
   useEffect(() => {
-    api.get('items').then(({ data: items }) => {
+    apiEcoleta.get('items').then(({ data: items }) => {
       setItems(items);
     });
   }, [items]);
