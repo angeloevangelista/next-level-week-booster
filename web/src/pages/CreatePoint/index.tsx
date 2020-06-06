@@ -3,7 +3,8 @@ import { Map, TileLayer, Marker } from 'react-leaflet';
 import { FiArrowLeft } from 'react-icons/fi';
 import { LeafletMouseEvent } from 'leaflet';
 import { Link } from 'react-router-dom';
-import { promisify } from 'util';
+
+import { UF, City, Item, FormData, IBGECityResponse, IBGEUFResponse } from '../../interfaces';
 
 import apiEcoleta from '../../services/apiEcoleta';
 import apiIBGE from '../../services/apiIBGE';
@@ -12,45 +13,23 @@ import './styles.css';
 
 import logo from '../../assets/logo.svg';
 
-interface Item {
-  id: number,
-  title: string,
-  image_url: string,
-}
-
-interface IBGEUFResponse {
-  id: number,
-  sigla: string,
-}
-
-interface IBGECityResponse {
-  id: number,
-  nome: string,
-}
-
-interface UF {
-  id: number,
-  initial: string,
-}
-
-interface City {
-  id: number,
-  name: string,
-}
-
 const CreatePoint = () => {
-  const [items, setItems] = useState<Item[]>([]);
+
+  const [formData, setFormData] = useState<FormData>({
+    name: '',
+    email: '',
+    whatsapp: '',
+  });
 
   const [ufs, setUfs] = useState<UF[]>([]);
-
+  const [items, setItems] = useState<Item[]>([]);
   const [cities, setCities] = useState<City[]>([]);
 
   const [selectedUf, setSelectedUf] = useState(0);
-
   const [selectedCity, setSelectedCity] = useState(0);
 
+  const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [initialPosition, setInitialPosition] = useState<[number, number]>([0, 0]);
-
   const [selectedPosition, setSelectedPosition] = useState<[number, number]>([0, 0]);
 
   useEffect(() => {
@@ -113,6 +92,23 @@ const CreatePoint = () => {
     setSelectedPosition([latlng.lat, latlng.lng]);
   }
 
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    setFormData({ ...formData, [name]: value });
+  }
+
+  const handleSelectItem = (itemId: number) => {
+    const indexItem = selectedItems.indexOf(itemId);
+
+    if (indexItem === -1)
+      return setSelectedItems([...selectedItems, itemId]);
+
+    const filteredItems = selectedItems.filter(item => item !== itemId);
+
+    setSelectedItems(filteredItems);
+  }
+
   return (
     <div id="page-create-point">
       <header>
@@ -138,7 +134,8 @@ const CreatePoint = () => {
               type="text"
               name="name"
               id="name"
-            />
+              onChange={handleInputChange}
+            ></input>
           </div>
 
           <div className="field-group">
@@ -148,6 +145,7 @@ const CreatePoint = () => {
                 type="email"
                 name="email"
                 id="email"
+                onChange={handleInputChange}
               />
             </div>
             <div className="field">
@@ -156,6 +154,7 @@ const CreatePoint = () => {
                 type="text"
                 name="whatsapp"
                 id="whatsapp"
+                onChange={handleInputChange}
               />
             </div>
           </div>
@@ -219,7 +218,11 @@ const CreatePoint = () => {
 
           <ul className="items-grid">
             {items.map(item => (
-              <li key={item.id}>
+              <li
+                key={item.id}
+                className={selectedItems.includes(item.id) ? 'selected' : ''}
+                onClick={() => handleSelectItem(item.id)}
+              >
                 <img src={item.image_url} alt={item.title} />
                 <span>{item.title}</span>
               </li>
