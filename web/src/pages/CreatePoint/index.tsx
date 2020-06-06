@@ -1,8 +1,8 @@
-import React, { useEffect, useState, ChangeEvent } from 'react';
+import React, { useEffect, useState, ChangeEvent, FormEvent } from 'react';
 import { Map, TileLayer, Marker } from 'react-leaflet';
-import { FiArrowLeft } from 'react-icons/fi';
+import { FiArrowLeft, FiCheckCircle } from 'react-icons/fi';
 import { LeafletMouseEvent } from 'leaflet';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
 import { UF, City, Item, FormData, IBGECityResponse, IBGEUFResponse } from '../../interfaces';
 
@@ -12,6 +12,7 @@ import apiIBGE from '../../services/apiIBGE';
 import './styles.css';
 
 import logo from '../../assets/logo.svg';
+import api from '../../services/apiEcoleta';
 
 const CreatePoint = () => {
 
@@ -25,12 +26,16 @@ const CreatePoint = () => {
   const [items, setItems] = useState<Item[]>([]);
   const [cities, setCities] = useState<City[]>([]);
 
-  const [selectedUf, setSelectedUf] = useState(0);
+  const [selectedUf, setSelectedUf] = useState('0');
   const [selectedCity, setSelectedCity] = useState(0);
 
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [initialPosition, setInitialPosition] = useState<[number, number]>([0, 0]);
   const [selectedPosition, setSelectedPosition] = useState<[number, number]>([0, 0]);
+
+  const [finisehd, setFinished] = useState(false);
+
+  const history = useHistory();
 
   useEffect(() => {
     apiEcoleta.get('items').then(({ data: items }) => {
@@ -77,7 +82,7 @@ const CreatePoint = () => {
   const handleSelectUF = (e: ChangeEvent<HTMLSelectElement>) => {
     const { value: uf } = e.target;
 
-    setSelectedUf(Number(uf));
+    setSelectedUf(uf);
   }
 
   const handleSelectCity = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -109,130 +114,169 @@ const CreatePoint = () => {
     setSelectedItems(filteredItems);
   }
 
-  return (
-    <div id="page-create-point">
-      <header>
-        <img src={logo} alt="Ecoleta" />
+  const handleSuccess = () => {
 
-        <Link to="/">
-          <FiArrowLeft />
+  }
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const { name, email, whatsapp } = formData;
+    const uf = selectedUf;
+    const city = selectedCity;
+    const [latitude, longitude] = selectedPosition;
+    const items = selectedItems;
+
+    const data = {
+      name,
+      email,
+      whatsapp,
+      uf,
+      city,
+      latitude,
+      longitude,
+      items
+    }
+
+    await api.post('points', data);
+
+    setFinished(true);
+
+    setTimeout(() => history.push('/'), 2000);
+  }
+
+  return (
+    <>
+      {finisehd ? (
+        <div id="success-notification">
+          <FiCheckCircle color='#3dcc33' size={75} />
+          <span>Cadastro concluído!</span>
+        </div>
+      ) : ''}
+      <div id="page-create-point">
+        <header>
+          <img src={logo} alt="Ecoleta" />
+
+          <Link to="/">
+            <FiArrowLeft />
           Voltar para a home
         </Link>
-      </header>
+        </header>
 
-      <form>
-        <h1>Cadastro do <br /> ponto de coleta</h1>
+        <form onSubmit={handleSubmit}>
+          <h1>Cadastro do <br /> ponto de coleta</h1>
 
-        <fieldset>
-          <legend>
-            <h2>Dados</h2>
-          </legend>
+          <fieldset>
+            <legend>
+              <h2>Dados</h2>
+            </legend>
 
-          <div className="field">
-            <label htmlFor="name">Nome da entidade</label>
-            <input
-              type="text"
-              name="name"
-              id="name"
-              onChange={handleInputChange}
-            ></input>
-          </div>
-
-          <div className="field-group">
             <div className="field">
-              <label htmlFor="name">Email</label>
-              <input
-                type="email"
-                name="email"
-                id="email"
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="field">
-              <label htmlFor="name">Whatsapp</label>
+              <label htmlFor="name">Nome da entidade</label>
               <input
                 type="text"
-                name="whatsapp"
-                id="whatsapp"
+                name="name"
+                id="name"
                 onChange={handleInputChange}
+              ></input>
+            </div>
+
+            <div className="field-group">
+              <div className="field">
+                <label htmlFor="name">Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  id="email"
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className="field">
+                <label htmlFor="name">Whatsapp</label>
+                <input
+                  type="text"
+                  name="whatsapp"
+                  id="whatsapp"
+                  onChange={handleInputChange}
+                />
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>
+              <h2>Endereço</h2>
+              <span>Selecionne o endereço no mapa</span>
+            </legend>
+
+            <Map center={initialPosition} zoom={15} onClick={handleMapClick}>
+              <TileLayer
+                attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               />
+
+              <Marker position={selectedPosition} />
+            </Map>
+
+            <div className="field-group">
+              <div className="field">
+                <label htmlFor="uf">Estado (UF)</label>
+                <select
+                  name="uf"
+                  id="uf"
+                  value={selectedUf}
+                  onChange={handleSelectUF}
+                >
+                  <option value="0">Selecione uma UF</option>
+
+                  {ufs.map(uf => (
+                    <option key={uf.id} value={uf.initial}>{uf.initial}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="field">
+                <label htmlFor="city">Cidade</label>
+                <select
+                  name="city"
+                  id="city"
+                  value={selectedCity}
+                  onChange={handleSelectCity}
+                  disabled={selectedUf === '0'}
+                >
+                  <option value="0">Selecione uma cidade</option>
+
+                  {cities.map(city => (
+                    <option key={city.id} value={city.id}>{city.name}</option>
+                  ))}
+                </select>
+              </div>
             </div>
-          </div>
-        </fieldset>
+          </fieldset>
 
-        <fieldset>
-          <legend>
-            <h2>Endereço</h2>
-            <span>Selecionne o endereço no mapa</span>
-          </legend>
+          <fieldset>
+            <legend>
+              <h2>Ítens de coleta</h2>
+              <span>Selecione um ou mais itens abaixo</span>
+            </legend>
 
-          <Map center={initialPosition} zoom={15} onClick={handleMapClick}>
-            <TileLayer
-              attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
+            <ul className="items-grid">
+              {items.map(item => (
+                <li
+                  key={item.id}
+                  className={selectedItems.includes(item.id) ? 'selected' : ''}
+                  onClick={() => handleSelectItem(item.id)}
+                >
+                  <img src={item.image_url} alt={item.title} />
+                  <span>{item.title}</span>
+                </li>
+              ))}
+            </ul>
+          </fieldset>
 
-            <Marker position={selectedPosition} />
-          </Map>
-
-          <div className="field-group">
-            <div className="field">
-              <label htmlFor="uf">Estado (UF)</label>
-              <select
-                name="uf"
-                id="uf"
-                value={selectedUf}
-                onChange={handleSelectUF}
-              >
-                <option value="0">Selecione uma UF</option>
-
-                {ufs.map(uf => (
-                  <option key={uf.id} value={uf.id}>{uf.initial}</option>
-                ))}
-              </select>
-            </div>
-            <div className="field">
-              <label htmlFor="city">Cidade</label>
-              <select
-                name="city"
-                id="city"
-                value={selectedCity}
-                onChange={handleSelectCity}
-                disabled={selectedUf === 0}
-              >
-                <option value="0">Selecione uma cidade</option>
-
-                {cities.map(city => (
-                  <option key={city.id} value={city.id}>{city.name}</option>
-                ))}
-              </select>
-            </div>
-          </div>
-        </fieldset>
-
-        <fieldset>
-          <legend>
-            <h2>Ítens de coleta</h2>
-            <span>Selecionne um ou mais itens abaixo</span>
-          </legend>
-
-          <ul className="items-grid">
-            {items.map(item => (
-              <li
-                key={item.id}
-                className={selectedItems.includes(item.id) ? 'selected' : ''}
-                onClick={() => handleSelectItem(item.id)}
-              >
-                <img src={item.image_url} alt={item.title} />
-                <span>{item.title}</span>
-              </li>
-            ))}
-          </ul>
-        </fieldset>
-
-        <button type="submit">Cadastrar ponto de coleta</button>
-      </form>
-    </div>
+          <button type="submit">Cadastrar ponto de coleta</button>
+        </form>
+      </div>
+    </>
   );
 }
 
