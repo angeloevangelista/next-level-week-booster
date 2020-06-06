@@ -10,7 +10,7 @@ import {
 
 import { Ubuntu_700Bold } from '@expo-google-fonts/ubuntu';
 
-import Home from './src/pages/Home';
+import Routes from './src/routes';
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -26,7 +26,7 @@ export default function App() {
   return (
     <>
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent={true} />
-      <Home />
+      <Routes />
     </>
   );
 }
